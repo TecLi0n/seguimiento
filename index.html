@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguimiento de Pedido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .seguimiento {
+      background: white;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .info {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .info p {
+      margin: 8px 0;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Seguimiento de tu Pedido</h1>
+
+<div class="seguimiento">
+  <p>Ingresa tu numero de pedido:</p>
+  <input type="text" id="codigoPedido" placeholder="Ejemplo: PED001">
+  <button onclick="buscarPedido()">Consultar Estado</button>
+  <div id="resultadoSeguimiento" class="info"></div>
+</div>
+
+<script>
+  const apiURL = "https://script.google.com/macros/s/AKfycbzb-1vCKIYnGoJAR4PbFkStN_59-GCADKdBjq3aKYI5rXKWIXaNnGjPOlzjC6Jd3fmp/exec";
+
+  async function buscarPedido() {
+    const codigo = document.getElementById("codigoPedido").value.trim().toUpperCase();
+    const resultado = document.getElementById("resultadoSeguimiento");
+
+    if (!codigo) {
+      resultado.innerHTML = "<p style='color:red;'>⚠️ Por favor ingresa un numero de pedido.</p>";
+      return;
+    }
+
+    const res = await fetch(`${apiURL}?pedido=${codigo}`);
+    const data = await res.json();
+
+    if (data.error) {
+      resultado.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
+    } else {
+      resultado.innerHTML = `
+        <p><strong>📦 Estado:</strong> ${data.estado}</p>
+        <p><strong>🚚 Paqueteria:</strong> ${data.paqueteria}</p>
+        <p><strong>🔢 Numero de guia:</strong> ${data.guia}</p>
+        <p><a href="${data.enlace}" target="_blank">🔗 Seguimiento Oficial</a></p>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>
